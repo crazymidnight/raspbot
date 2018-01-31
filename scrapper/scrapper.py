@@ -2,6 +2,7 @@ from bs4 import BeautifulSoup
 import requests
 
 WINDOW_TEXT = 'В это время окно'
+TIMES = ['8:30', '10:25', '12:20', '14:15', '16:10', '18:05']
 
 def get_html(group):
 
@@ -23,20 +24,26 @@ def scrape_today(group):
     # print(soup.body.find)
     table = soup.body.find('table', {'class': 'c-table schedule'})
 
-    subjects = table.findAll('div', {'class': 'subject'})
-    times = table.findAll('div', {'class': 'lesson-type'})
-    rooms = table.findAll('div', {'class': 'room'})
-    teachers = table.findAll('div', {'class': 'group-teacher'})
-    current_day = table.findAll('td', {'class': 'current-day'})
+    try:
+        current_day = table.findAll('td', {'class': 'current-day'})
+    except AttributeError:
+        return 'Расписание не найдено :( \nПопробуйте ввести заново'
 
-    today_subjects = []
-
+    today_subjects = ''
+    time_num = 0
     for i in current_day:
 
         if len(i.text) < 3:
-            today_subjects.append(WINDOW_TEXT)
+            today_subjects += (TIMES[time_num] + '\n')
+            today_subjects += (WINDOW_TEXT + '\n')
+            today_subjects += ('-----------------------' + '\n')
 
         else:
-            today_subjects.append(i.text)
+            today_subjects += (TIMES[time_num] + '\n')
+            today_subjects += (i.text + '\n')
+            today_subjects += ('-----------------------' + '\n')
+
+        time_num += 1
+
 
     return today_subjects
