@@ -22,12 +22,13 @@ def scrape_today(group):
     soup = BeautifulSoup(rasp, "html.parser")
     # print(soup.body.prettify())
     # print(soup.body.find)
-    table = soup.body.find('table', {'class': 'c-table schedule'})
-
-    try:
-        current_day = table.findAll('td', {'class': 'current-day'})
-    except AttributeError:
-        return 'Расписание не найдено :( \nПопробуйте ввести заново'
+    tables = soup.body.findAll('table', {'class': 'c-table schedule'})
+    current_day = ''
+    for table in tables:
+        try:
+            current_day = table.findAll('td', {'class': 'current-day'})
+        except AttributeError:
+            return 'Расписание не найдено :( \nПопробуйте ввести заново'
 
     today_subjects = ''
     time_num = 0
@@ -45,5 +46,12 @@ def scrape_today(group):
 
         time_num += 1
 
+    if len(today_subjects) < 3:
+        return 'Расписание не найдено :( \nПопробуйте ввести заново'
 
     return today_subjects
+
+if __name__ == '__main__':
+    group = '8е41'
+    rasp = scrape_today(group=group)
+    print(rasp)
