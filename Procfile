@@ -1,1 +1,0 @@
-web: python rasp_bot.py
