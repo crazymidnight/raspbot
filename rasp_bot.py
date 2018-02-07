@@ -12,11 +12,12 @@ bot = telebot.TeleBot(config.TOKEN)
 
 @bot.message_handler(content_types=['text'])
 def show_today(message):
-    group = message.text
-    text = scrapper.scrape_today(group=group)
+    group = message.text.upper()
+    print(group)
+
     if re.search(r'[0-9][А-Яа-я][0-9]([0-9]|[А-Яа-я])', group):
         text = scrapper.scrape_today(group=group)
-    elif re.search(r'[ЭТО]{3}([0-9]{2, 3})', group):
+    elif re.search(r'[Э][Т][О]([0-9]){2,3}', group):
         text = scrapper.scrape_today(group=group)
     else:
         text = 'Введите номер своей группы!'
