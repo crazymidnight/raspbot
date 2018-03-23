@@ -2,17 +2,48 @@ from bs4 import BeautifulSoup
 import requests
 
 WINDOW_TEXT = 'В это время окно'
-TIMES = ['8:30', '10:25', '12:20', '14:15', '16:10', '18:05']
+TIMES = ['08:30', '10:25', '12:20', '14:15', '16:10', '18:05']
 
 def get_html(group):
 
     headers = {
             'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.9; rv:45.0) Gecko/20100101 Firefox/45.0'
           }
-    url = f'http://rasp.tpu.ru/view.php?for={group}&aslist=0'  # url для второй страницы
+    url = f'http://rasp.tpu.ru/view.php?for={group}'  # url для второй страницы
     r = requests.get(url, headers=headers)
 
     return r.text
+
+
+def scrape_rasp(group):
+    """find all subjects"""
+    rasp = get_html(group=group)
+    soup = BeautifulSoup(rasp, 'html.parser')
+    tables = soup.body.findAll()
+    tables = soup.body.findAll('table', {'class': 'c-table schedule'})
+    weeks = [tables[0].findAll('td'), tables[1].findAll('td')]
+    a = 0
+    odd_week = {'monday': [], 'tuesday': [], 'wednesday': [], 'thursday': [], 'friday': [], 'saturday': []}
+    even_week = {'monday': [], 'tuesday': [], 'wednesday': [], 'thursday': [], 'friday': [], 'saturday': []}
+
+    week_idx = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday']
+
+    for one_week in weeks:
+        for i in one_week:
+            if i.text in TIMES:
+                print('LAAAAAAAAL')
+            else:
+                if len(i.text) > 0:
+                    print(i.text)
+                    odd_week[week_idx[a]].append(i.text)
+                else:
+                    odd_week[week_idx[a]].append('Этой пары нет')
+                if a < 5:
+                    a += 1
+                else:
+                    a = 0
+
+    return odd_week
 
 
 def scrape_today(group):
@@ -26,7 +57,7 @@ def scrape_today(group):
     current_day = ''
     for table in tables:
         try:
-            current_day = table.findAll('td', {'class': 'current-day'})
+            current_day = table.findAll('div', {'class': 'subject'})
         except AttributeError:
             return 'Расписание не найдено :( \nПопробуйте ввести заново'
 
@@ -53,5 +84,5 @@ def scrape_today(group):
 
 if __name__ == '__main__':
     group = '8е41'
-    rasp = scrape_today(group=group)
-    print(rasp)
+    scrape_rasp(group=group)
+
