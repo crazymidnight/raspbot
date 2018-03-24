@@ -1,4 +1,5 @@
 from bs4 import BeautifulSoup
+import datetime
 import requests
 
 WINDOW_TEXT = 'В это время окно'
@@ -23,27 +24,32 @@ def scrape_rasp(group):
     tables = soup.body.findAll('table', {'class': 'c-table schedule'})
     weeks = [tables[0].findAll('td'), tables[1].findAll('td')]
     a = 0
+
     odd_week = {'monday': [], 'tuesday': [], 'wednesday': [], 'thursday': [], 'friday': [], 'saturday': []}
     even_week = {'monday': [], 'tuesday': [], 'wednesday': [], 'thursday': [], 'friday': [], 'saturday': []}
-
+    both_weeks = {'odd': odd_week, 'even': even_week}
     week_idx = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday']
-
+    idx = 'odd'
     for one_week in weeks:
         for i in one_week:
             if i.text in TIMES:
-                print('LAAAAAAAAL')
+                pass
             else:
                 if len(i.text) > 0:
                     print(i.text)
-                    odd_week[week_idx[a]].append(i.text)
+                    both_weeks[idx][week_idx[a]].append(i.text)
                 else:
-                    odd_week[week_idx[a]].append('Этой пары нет')
+                    both_weeks[idx][week_idx[a]].append('Этой пары нет')
                 if a < 5:
                     a += 1
                 else:
                     a = 0
+        idx = 'even'
+    return both_weeks
 
-    return odd_week
+
+def get_week(both_weeks):
+    print()
 
 
 def scrape_today(group):
@@ -83,6 +89,6 @@ def scrape_today(group):
     return today_subjects
 
 if __name__ == '__main__':
-    group = '8е41'
-    scrape_rasp(group=group)
-
+    group = '4б51'
+    week = scrape_rasp(group=group)
+    print(week) 
