@@ -5,6 +5,7 @@ import requests
 WINDOW_TEXT = 'В это время окно'
 TIMES = ['08:30', '10:25', '12:20', '14:15', '16:10', '18:05']
 
+
 def get_html(group):
 
     headers = {
@@ -24,11 +25,11 @@ def scrape_rasp(group):
     tables = soup.body.findAll('table', {'class': 'c-table schedule'})
     weeks = [tables[0].findAll('td'), tables[1].findAll('td')]
     a = 0
-
-    odd_week = {'monday': [], 'tuesday': [], 'wednesday': [], 'thursday': [], 'friday': [], 'saturday': []}
-    even_week = {'monday': [], 'tuesday': [], 'wednesday': [], 'thursday': [], 'friday': [], 'saturday': []}
+    # odd and even weeks
+    odd_week = {0: [], 1: [], 2: [], 3: [], 4: [], 5: []}
+    even_week = {0: [], 1: [], 2: [], 3: [], 4: [], 5: []}
     both_weeks = {'odd': odd_week, 'even': even_week}
-    week_idx = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday']
+    week_idx = [0, 1, 2, 3, 4, 5]
     idx = 'odd'
     for one_week in weeks:
         for i in one_week:
@@ -36,7 +37,6 @@ def scrape_rasp(group):
                 pass
             else:
                 if len(i.text) > 0:
-                    print(i.text)
                     both_weeks[idx][week_idx[a]].append(i.text)
                 else:
                     both_weeks[idx][week_idx[a]].append('Этой пары нет')
@@ -48,47 +48,36 @@ def scrape_rasp(group):
     return both_weeks
 
 
-def get_week(both_weeks):
-    print()
+def get_current_week(both_weeks):
+    date = datetime.datetime.today()
+    week = date.isocalendar()[1]
+    if week % 2 == 0:
+        return both_weeks['even']
+    else:
+        return both_weeks['odd']
 
 
-def scrape_today(group):
-
-    rasp = get_html(group=group)
-
-    soup = BeautifulSoup(rasp, "html.parser")
-    # print(soup.body.prettify())
-    # print(soup.body.find)
-    tables = soup.body.findAll('table', {'class': 'c-table schedule'})
-    current_day = ''
-    for table in tables:
-        try:
-            current_day = table.findAll('div', {'class': 'subject'})
-        except AttributeError:
-            return 'Расписание не найдено :( \nПопробуйте ввести заново'
-
-    today_subjects = ''
-    time_num = 0
-    for i in current_day:
-
-        if len(i.text) < 3:
+def get_current_day(week):
+    date = datetime.datetime.today()
+    day = date.weekday()
+    if day < 6:
+        schedule = week[day]
+        today_subjects = ''
+        time_num = 0
+        for i in schedule:
             today_subjects += (TIMES[time_num] + '\n')
-            today_subjects += (WINDOW_TEXT + '\n')
+            today_subjects += (i + '\n')
             today_subjects += ('-----------------------' + '\n')
 
-        else:
-            today_subjects += (TIMES[time_num] + '\n')
-            today_subjects += (i.text + '\n')
-            today_subjects += ('-----------------------' + '\n')
+            time_num += 1
+        return today_subjects
+    else:
+        return 'Сегодня выходной'
 
-        time_num += 1
-
-    if len(today_subjects) < 3:
-        return 'Расписание не найдено :( \nПопробуйте ввести заново'
-
-    return today_subjects
 
 if __name__ == '__main__':
-    group = '4б51'
-    week = scrape_rasp(group=group)
-    print(week) 
+    group = '8е41'
+    weeks = scrape_rasp(group=group)
+    current_week = get_current_week(weeks)
+    text = get_current_day(week=current_week)
+    print(text)
