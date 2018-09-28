@@ -1,5 +1,6 @@
 Telegram-бот для просмотра расписания занятий Томского Политехнического Университета
 ------------------------------------------------------------------------------------
+[![Build status](https://ci.appveyor.com/api/projects/status/6y4ljr8fqtjouowk?svg=true)](https://ci.appveyor.com/project/crazymidnight/rasp-tpu-bot)
 ### Как пользоваться:
 1. Напиши <a href=http://t.me/rasptpubot>боту</a> в Telegram номер своей группы
 2. Получи актуальное расписание на сегодня
