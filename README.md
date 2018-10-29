@@ -1,4 +1,4 @@
-Telegram-бот для просмотра расписания занятий Томского Политехнического Университета
+Telegram-бот для просмотра расписания занятий Томского Политехнического Университета (сейчас ничего не работает)
 ------------------------------------------------------------------------------------
 [![CircleCI](https://circleci.com/gh/crazymidnight/rasp-tpu-bot/tree/master.svg?style=svg)](https://circleci.com/gh/crazymidnight/rasp-tpu-bot/tree/master)
 ### Как пользоваться:
