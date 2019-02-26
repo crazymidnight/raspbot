@@ -6,7 +6,7 @@ Flask==1.0.2
 idna==2.8
 itsdangerous==1.1.0
 Jinja2==2.10
-MarkupSafe==1.1.0
+MarkupSafe==1.1.1
 pyTelegramBotAPI==3.6.6
 requests==2.21.0
 six==1.11.0
